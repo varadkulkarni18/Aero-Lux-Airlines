@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroLux Airlines - Premium Flight Booking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loader" class="loader-container">
+        <div class="loader">
+            <div class="plane">
+                <div class="plane-body"></div>
+                <div class="plane-wing"></div>
+            </div>
+            <div class="loading-text">
+                <span>A</span><span>e</span><span>r</span><span>o</span><span>L</span><span>u</span><span>x</span>
+            </div>
+        </div>
+        <div class="loading-progress">
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Animated Background -->
+    <div class="background">
+        <div class="aurora"></div>
+        <div class="stars"></div>
+        <div class="particles"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar glass-card">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">✈️</span>
+                <span class="logo-text">AeroLux</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active" data-section="home">Home</a>
+                <a href="#booking" class="nav-link" data-section="booking">Book Flight</a>
+                <a href="#tickets" class="nav-link" data-section="tickets">My Tickets</a>
+                <a href="#availability" class="nav-link" data-section="availability">Seat Map</a>
+                <a href="#cancel" class="nav-link" data-section="cancel">Cancel</a>
+                <a href="#about" class="nav-link" data-section="about">About</a>
+                <a href="#team" class="nav-link" data-section="team">Team</a>
+                <a href="#contact" class="nav-link" data-section="contact">Contact</a>
+            </div>
+            <div class="nav-controls">
+                <button id="themeToggle" class="theme-toggle" title="Toggle Theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <div class="hero-content animate__animated animate__fadeInLeft">
+                    <h1 class="hero-title">
+                        <span class="title-line">Premium Flight</span>
+                        <span class="title-line">Experience</span>
+                    </h1>
+                    <p class="hero-subtitle">Discover the world with AeroLux Airlines. Book your dream destination with comfort and style.</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" data-section="booking">Book Now</button>
+                        <button class="btn btn-secondary" data-section="availability">View Seats</button>
+                    </div>
+                </div>
+                <div class="hero-image animate__animated animate__fadeInRight">
+                    <div class="floating-plane">✈️</div>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature-card glass-card animate__animated animate__fadeInUp" data-delay="0.2s">
+                    <div class="feature-icon">🌟</div>
+                    <h3>Premium Service</h3>
+                    <p>Experience luxury at 30,000 feet with our premium services and amenities.</p>
+                </div>
+                <div class="feature-card glass-card animate__animated animate__fadeInUp" data-delay="0.4s">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Safe & Secure</h3>
+                    <p>Your safety is our priority with state-of-the-art aircraft and experienced crew.</p>
+                </div>
+                <div class="feature-card glass-card animate__animated animate__fadeInUp" data-delay="0.6s">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant Booking</h3>
+                    <p>Book your flights instantly with our streamlined booking process.</p>
+                </div>
+            </div>
+
+            <!-- Testimonials Section -->
+            <div class="testimonials-section">
+                <div class="section-header">
+                    <h2 class="section-title">What Our Customers Say</h2>
+                    <p class="section-subtitle">Real experiences from our valued passengers</p>
+                </div>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card glass-card animate__animated animate__fadeInUp">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p>"Exceptional service and comfortable flights. AeroLux made my business trip a pleasure!"</p>
+                        <div class="testimonial-author">
+                            <strong>Rajesh Kumar</strong>
+                            <span>Business Executive</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-card glass-card animate__animated animate__fadeInUp" data-delay="0.2s">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p>"Amazing experience! The crew was friendly and the seats were incredibly comfortable."</p>
+                        <div class="testimonial-author">
+                            <strong>Priya Sharma</strong>
+                            <span>Travel Blogger</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-card glass-card animate__animated animate__fadeInUp" data-delay="0.4s">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p>"Best airline I've flown with! Professional service and great value for money."</p>
+                        <div class="testimonial-author">
+                            <strong>Amit Patel</strong>
+                            <span>Software Engineer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Booking Section -->
+        <section id="booking" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Book Your Flight</h2>
+                    <p class="section-subtitle">Fill in your details to secure your seat</p>
+                </div>
+
+                <div class="booking-container">
+                    <form id="bookingForm" class="booking-form glass-card">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="passengerName">Full Name *</label>
+                                <input type="text" id="passengerName" name="passengerName" required>
+                                <div class="error-message" id="passengerNameError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="passportNumber">Passport Number *</label>
+                                <input type="text" id="passportNumber" name="passportNumber" required placeholder="A1234567">
+                                <div class="error-message" id="passportNumberError"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" required>
+                                <div class="error-message" id="emailError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Mobile Number *</label>
+                                <input type="tel" id="phone" name="phone" required placeholder="10 digits only">
+                                <div class="error-message" id="phoneError"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="from">From *</label>
+                                <div class="select-wrapper">
+                                    <select id="from" name="from" required>
+                                        <option value="">Select Departure City</option>
+                                        <option value="Delhi">Delhi</option>
+                                        <option value="Kolkata">Kolkata</option>
+                                        <option value="Chennai">Chennai</option>
+                                        <option value="Mumbai">Mumbai</option>
+                                        <option value="Bengaluru">Bengaluru</option>
+                                        <option value="Hyderabad">Hyderabad</option>
+                                    </select>
+                                </div>
+                                <div class="error-message" id="fromError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="to">To *</label>
+                                <div class="select-wrapper">
+                                    <select id="to" name="to" required>
+                                        <option value="">Select Destination City</option>
+                                        <option value="Delhi">Delhi</option>
+                                        <option value="Kolkata">Kolkata</option>
+                                        <option value="Chennai">Chennai</option>
+                                        <option value="Mumbai">Mumbai</option>
+                                        <option value="Bengaluru">Bengaluru</option>
+                                        <option value="Hyderabad">Hyderabad</option>
+                                    </select>
+                                </div>
+                                <div class="error-message" id="toError"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="departureDate">Departure Date *</label>
+                                <input type="date" id="departureDate" name="departureDate" required>
+                                <div class="error-message" id="departureDateError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="seatClass">Seat Class *</label>
+                                <div class="select-wrapper">
+                                    <select id="seatClass" name="seatClass" required>
+                                        <option value="">Select Class</option>
+                                        <option value="economy">Economy - ₹7,500</option>
+                                        <option value="business">Business - ₹25,000</option>
+                                    </select>
+                                </div>
+                                <div class="error-message" id="seatClassError"></div>
+                            </div>
+                        </div>
+
+                        <div class="fare-display">
+                            <div class="fare-breakdown">
+                                <div class="fare-item">
+                                    <span>Base Fare:</span>
+                                    <span id="baseFare">₹0</span>
+                                </div>
+                                <div class="fare-item">
+                                    <span>Taxes & Fees:</span>
+                                    <span id="taxes">₹0</span>
+                                </div>
+                                <div class="fare-total">
+                                    <span>Total:</span>
+                                    <span id="totalFare">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <span class="btn-text">Book Flight</span>
+                            <span class="btn-icon">✈️</span>
+                        </button>
+                    </form>
+
+                    <div class="booking-info glass-card">
+                        <h3>Why Choose AeroLux?</h3>
+                        <ul>
+                            <li>✅ Free seat selection</li>
+                            <li>✅ 24/7 customer support</li>
+                            <li>✅ Free cancellation up to 24hrs</li>
+                            <li>✅ Premium in-flight entertainment</li>
+                            <li>✅ Complimentary meals & beverages</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payment Section -->
+        <section id="payment" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Payment Details</h2>
+                    <p class="section-subtitle">Secure payment for your flight booking</p>
+                </div>
+
+                <div class="payment-container">
+                    <form id="paymentForm" class="payment-form glass-card">
+                        <div class="payment-summary">
+                            <h3>Booking Summary</h3>
+                            <div id="paymentSummary"></div>
+                        </div>
+
+                        <div class="payment-methods">
+                            <h3>Payment Method</h3>
+                            <div class="payment-options">
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="card" checked>
+                                    <span class="payment-label">💳 Credit/Debit Card</span>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="upi">
+                                    <span class="payment-label">📱 UPI</span>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="netbanking">
+                                    <span class="payment-label">🏦 Net Banking</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="card-details" id="cardDetails">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cardNumber">Card Number</label>
+                                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cardName">Cardholder Name</label>
+                                    <input type="text" id="cardName" placeholder="John Doe">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="expiryDate">Expiry Date</label>
+                                    <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cvv">CVV</label>
+                                    <input type="text" id="cvv" placeholder="123" maxlength="3">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="upi-details" id="upiDetails" style="display: none;">
+                            <div class="form-group">
+                                <label for="upiId">UPI ID</label>
+                                <input type="text" id="upiId" placeholder="yourname@upi">
+                            </div>
+                        </div>
+
+                        <div class="netbanking-details" id="netbankingDetails" style="display: none;">
+                            <div class="form-group">
+                                <label for="bankSelect">Select Bank</label>
+                                <select id="bankSelect">
+                                    <option value="">Choose your bank</option>
+                                    <option value="sbi">State Bank of India</option>
+                                    <option value="hdfc">HDFC Bank</option>
+                                    <option value="icici">ICICI Bank</option>
+                                    <option value="axis">Axis Bank</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <span class="btn-text">Pay Now</span>
+                            <span class="btn-icon">💳</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tickets Section -->
+        <section id="tickets" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">My Tickets</h2>
+                    <p class="section-subtitle">View and manage your flight bookings</p>
+                </div>
+
+                <div class="tickets-controls">
+                    <div class="search-box">
+                        <input type="text" id="ticketSearch" placeholder="Search by passport or name...">
+                        <button class="search-btn">🔍</button>
+                    </div>
+                </div>
+
+                <div id="ticketsList" class="tickets-list">
+                    <!-- Tickets will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Availability Section -->
+        <section id="availability" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Seat Availability</h2>
+                    <p class="section-subtitle">Check available seats and choose your preference</p>
+                </div>
+
+                <div class="seat-map-container glass-card">
+                    <div class="aircraft-header">
+                        <h3>Boeing 787 Dreamliner</h3>
+                        <div class="legend">
+                            <div class="legend-item">
+                                <div class="seat-demo available"></div>
+                                <span>Available</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="seat-demo occupied"></div>
+                                <span>Occupied</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="seat-demo selected"></div>
+                                <span>Selected</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="seat-map" id="seatMapContainer">
+                        <!-- Seat map will be generated by JavaScript -->
+                    </div>
+
+                    <div class="seat-info">
+                        <div class="selected-seat-info">
+                            <span id="selectedSeatInfo">Select a seat to see details</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cancel Section -->
+        <section id="cancel" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Cancel Booking</h2>
+                    <p class="section-subtitle">Cancel your flight booking securely</p>
+                </div>
+
+                <div class="cancel-container">
+                    <form id="cancelForm" class="cancel-form glass-card">
+                        <div class="form-group">
+                            <label for="cancelPassport">Passport Number *</label>
+                            <input type="text" id="cancelPassport" name="cancelPassport" required 
+                                   placeholder="Enter your passport number">
+                            <div class="error-message" id="cancelPassportError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cancelEmail">Email Address *</label>
+                            <input type="email" id="cancelEmail" name="cancelEmail" required 
+                                   placeholder="Enter your email address">
+                            <div class="error-message" id="cancelEmailError"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-large">
+                            <span class="btn-text">Cancel Booking</span>
+                            <span class="btn-icon">❌</span>
+                        </button>
+                    </form>
+
+                    <div class="cancel-info glass-card">
+                        <h3>Cancellation Policy</h3>
+                        <ul>
+                            <li>🕐 Free cancellation up to 24 hours before departure</li>
+                            <li>💰 Refund processed within 5-7 business days</li>
+                            <li>📧 Confirmation email sent immediately</li>
+                            <li>📞 Contact support for special circumstances</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">About AeroLux Airlines</h2>
+                    <p class="section-subtitle">Your trusted partner in aviation excellence</p>
+                </div>
+
+                <div class="about-content">
+                    <div class="about-text glass-card animate__animated animate__fadeInLeft">
+                        <h3>Our Story</h3>
+                        <p>Founded in 2024, AeroLux Airlines has been at the forefront of premium aviation services in India. We pride ourselves on delivering exceptional customer experiences, maintaining the highest safety standards, and connecting people to their dreams across the globe.</p>
+                        <p>With a fleet of modern aircraft and a team of dedicated professionals, we ensure every journey with us is comfortable, safe, and memorable. Our commitment to excellence has made us one of India's most trusted airlines.</p>
+                    </div>
+                    <div class="about-image animate__animated animate__fadeInRight">
+                        <div class="about-plane">✈️</div>
+                    </div>
+                </div>
+
+                <div class="mission-vision">
+                    <div class="mission glass-card animate__animated animate__fadeInUp">
+                        <div class="mission-icon">🎯</div>
+                        <h3>Our Mission</h3>
+                        <p>To provide safe, reliable, and comfortable air travel experiences while maintaining the highest standards of customer service and operational excellence.</p>
+                    </div>
+                    <div class="vision glass-card animate__animated animate__fadeInUp" data-delay="0.2s">
+                        <div class="vision-icon">🌟</div>
+                        <h3>Our Vision</h3>
+                        <p>To be India's leading premium airline, connecting hearts and destinations while setting new benchmarks in aviation industry.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Meet Our Team</h2>
+                    <p class="section-subtitle">The passionate professionals behind AeroLux</p>
+                </div>
+
+                <div class="team-grid">
+                    <div class="team-card glass-card animate__animated animate__fadeInUp">
+                        <div class="team-avatar">👨‍💼</div>
+                        <h3>Varad Kulkarni</h3>
+                        <p class="team-role">Front-End Developer</p>
+                        <p class="team-bio">Contribution in the team with front end-design and implementing various design features.</p>
+                    </div>
+                    <div class="team-card glass-card animate__animated animate__fadeInUp" data-delay="0.2s">
+                        <div class="team-avatar">👩‍💻</div>
+                        <h3>Nikhil Srivastav</h3>
+                        <p class="team-role">Backend-End Developer</p>
+                        <p class="team-bio">Builds the logic, APIs, and server-side architecture that power the core booking system and data handling.</p>
+                    </div>
+                    <div class="team-card glass-card animate__animated animate__fadeInUp" data-delay="0.4s">
+                        <div class="team-avatar">👨‍✈️</div>
+                        <h3>Karan Kawle</h3>
+                        <p class="team-role">Database Manager</p>
+                        <p class="team-bio">Designs and maintains secure, efficient databases to store bookings, passenger info, and seat data.</p>
+                    </div>
+                    <div class="team-card glass-card animate__animated animate__fadeInUp" data-delay="0.6s">
+                        <div class="team-avatar">👨‍💼</div>
+                        <h3>Aryan Kanthe</h3>
+                        <p class="team-role">QA & Tester</p>
+                        <p class="team-bio">Ensures everything works flawlessly across devices with thorough testing and bug fixing.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Contact Us</h2>
+                    <p class="section-subtitle">Get in touch with our team</p>
+                </div>
+
+                <div class="contact-container">
+                    <form id="contactForm" class="contact-form glass-card">
+                        <div class="form-group">
+                            <label for="contactName">Full Name *</label>
+                            <input type="text" id="contactName" name="contactName" required>
+                            <div class="error-message" id="contactNameError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactEmail">Email Address *</label>
+                            <input type="email" id="contactEmail" name="contactEmail" required>
+                            <div class="error-message" id="contactEmailError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactSubject">Subject *</label>
+                            <input type="text" id="contactSubject" name="contactSubject" required>
+                            <div class="error-message" id="contactSubjectError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactMessage">Message *</label>
+                            <textarea id="contactMessage" name="contactMessage" rows="5" required></textarea>
+                            <div class="error-message" id="contactMessageError"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-large">
+                            <span class="btn-text">Send Message</span>
+                            <span class="btn-icon">📧</span>
+                        </button>
+                    </form>
+
+                    <div class="contact-info glass-card">
+                        <h3>Get In Touch</h3>
+                        <div class="contact-item">
+                            <span class="contact-icon">📍</span>
+                            <div>
+                                <strong>Address</strong>
+                                <p>AeroLux Airlines Headquarters<br>123 Aviation Boulevard<br>Kolhapur,Kandalgaon,416013</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📞</span>
+                            <div>
+                                <strong>Phone</strong>
+                                <p>+91 7218011579<br>+91 9967568956</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📧</span>
+                            <div>
+                                <strong>Email</strong>
+                                <p>info@aerolux.com<br>support@aerolux.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <p class="section-subtitle">Find answers to common questions</p>
+                </div>
+
+                <div class="faq-container">
+                    <div class="faq-item glass-card">
+                        <div class="faq-question">
+                            <h3>How can I book a flight?</h3>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>You can book a flight through our website by selecting your departure and destination cities, choosing your travel dates, and completing the booking process with your personal details and payment information.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item glass-card">
+                        <div class="faq-question">
+                            <h3>What is your cancellation policy?</h3>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We offer free cancellation up to 24 hours before departure. Refunds are processed within 5-7 business days. For cancellations within 24 hours, cancellation fees may apply.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item glass-card">
+                        <div class="faq-question">
+                            <h3>Can I select my seat during booking?</h3>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes! Seat selection is complimentary for all passengers. You can choose your preferred seat from our interactive seat map during the booking process.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item glass-card">
+                        <div class="faq-question">
+                            <h3>What documents do I need for domestic flights?</h3>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>For domestic flights within India, you need a valid government-issued photo ID such as Aadhaar Card, Passport, Driving License, or Voter ID card.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item glass-card">
+                        <div class="faq-question">
+                            <h3>What is included in the ticket price?</h3>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Our ticket prices include seat selection, meals, beverages, in-flight entertainment, and 20kg checked baggage allowance. No hidden fees!</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item glass-card">
+                        <div class="faq-question">
+                            <h3>How early should I arrive at the airport?</h3>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>We recommend arriving at least 2 hours before domestic flights and 3 hours before international flights to allow sufficient time for check-in and security procedures.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="logo-icon">✈️</span>
+                        <span class="logo-text">AeroLux</span>
+                    </div>
+                    <p>Your trusted partner for premium flight experiences.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#booking">Book Flight</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#cancel">Cancel Booking</a></li>
+                        <li><a href="#tickets">My Tickets</a></li>
+                        <li><a href="#24/7Support">24/7 Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <span>Share:</span>
+                    
+                        <a href="https://www.facebook.com/login/" target="_blank" title="Facebook Login">
+                            <img class="social-icon"
+                                src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+                        </a>
+                    
+                        <a href="https://web.whatsapp.com/" target="_blank" title="WhatsApp Web">
+                            <img class="social-icon" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                        </a>
+                    
+                        <a href="https://www.instagram.com/accounts/login/" target="_blank" title="Instagram Login">
+                            <img class="social-icon" src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"
+                                alt="Instagram">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 AeroLux Airlines. All rights reserved.</p>
+                <p>Made with ❤️ by Team AeroLux - Varad Kulkarni, Nikhil Srivastav,  Karan Kawle, Aryan Kanthe</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification System -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <span class="notification-icon"></span>
+            <span class="notification-message"></span>
+            <button class="notification-close">×</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
