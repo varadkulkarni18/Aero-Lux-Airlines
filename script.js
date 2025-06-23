@@ -8,7 +8,7 @@ let flights = [
     },
     {
         flightNumber: "FL002", 
-        origin: "Kolkata",
+        origin: "Mumbai",
         destination: "Bengaluru",
         seats: []
     },
@@ -34,13 +34,18 @@ const BUSINESS_BASE_PRICE = 25000.0;
 const BOOKED = 1;
 const CANCELLED = 0;
 
-// Configuration updated to match C logic
+// Enhanced configuration with taxes and fees
 const config = {
     prices: {
         economy: ECONOMY_BASE_PRICE,
         business: BUSINESS_BASE_PRICE
     },
-    taxes: 0, // No taxes in C version
+    taxes: {
+        gst: 0.18, // 18% GST
+        airportFee: 150,
+        fuelSurcharge: 0.05, // 5% fuel surcharge
+        serviceFee: 200
+    },
     seatLayout: {
         business: { rows: 1, seatsPerRow: 5, prefix: 'B' }, // Seats 1-5
         economy: { rows: 1, seatsPerRow: 5, prefix: 'E' } // Seats 6-10
@@ -144,7 +149,7 @@ function initializeFlights() {
     }
 }
 
-// Update form options to match C flights
+// Update form options to match available routes only
 function updateFormOptions() {
     const fromSelect = document.getElementById('from');
     const toSelect = document.getElementById('to');
@@ -153,17 +158,48 @@ function updateFormOptions() {
     fromSelect.innerHTML = '<option value="">Select Departure City</option>';
     toSelect.innerHTML = '<option value="">Select Destination City</option>';
     
-    // Add flight origins and destinations
-    const cities = new Set();
-    flights.forEach(flight => {
-        cities.add(flight.origin);
-        cities.add(flight.destination);
+    // Add only valid departure cities (origins)
+    const origins = [...new Set(flights.map(flight => flight.origin))];
+    const destinations = [...new Set(flights.map(flight => flight.destination))];
+    
+    origins.forEach(city => {
+        fromSelect.innerHTML += `<option value="${city}">${city}</option>`;
     });
     
-    cities.forEach(city => {
-        fromSelect.innerHTML += `<option value="${city}">${city}</option>`;
+    destinations.forEach(city => {
         toSelect.innerHTML += `<option value="${city}">${city}</option>`;
     });
+}
+
+// Enhanced mobile number validation
+function validateMobile(mobile) {
+    // Must be exactly 10 digits
+    if (!/^\d{10}$/.test(mobile)) return false;
+    
+    // Reject obvious fake numbers
+    const fakePatterns = [
+        /^0{10}$/, // All zeros
+        /^1{10}$/, // All ones
+        /^2{10}$/, // All twos
+        /^3{10}$/, // All threes
+        /^4{10}$/, // All fours
+        /^5{10}$/, // All fives
+        /^6{10}$/, // All sixes
+        /^7{10}$/, // All sevens
+        /^8{10}$/, // All eights
+        /^9{10}$/, // All nines
+        /^1234567890$/, // Sequential
+        /^0123456789$/, // Sequential starting with 0
+    ];
+    
+    for (let pattern of fakePatterns) {
+        if (pattern.test(mobile)) return false;
+    }
+    
+    // Must start with 6, 7, 8, or 9 (Indian mobile numbers)
+    if (!/^[6-9]/.test(mobile)) return false;
+    
+    return true;
 }
 
 // Validation functions matching C code
@@ -182,10 +218,6 @@ function validatePassport(passport) {
     return true;
 }
 
-function validateMobile(mobile) {
-    return /^\d{10}$/.test(mobile);
-}
-
 function isUniquePassport(passport) {
     for (let i = 0; i < MAX_FLIGHTS; i++) {
         for (let j = 0; j < MAX_SEATS; j++) {
@@ -200,6 +232,27 @@ function isUniquePassport(passport) {
 // Find flight by origin and destination
 function findFlightByRoute(from, to) {
     return flights.find(flight => flight.origin === from && flight.destination === to);
+}
+
+// Enhanced fare calculation with taxes and fees
+function calculateTotalFare(basePrice) {
+    const gstAmount = basePrice * config.taxes.gst;
+    const fuelSurcharge = basePrice * config.taxes.fuelSurcharge;
+    const airportFee = config.taxes.airportFee;
+    const serviceFee = config.taxes.serviceFee;
+    
+    const totalTaxes = gstAmount + fuelSurcharge + airportFee + serviceFee;
+    const totalFare = basePrice + totalTaxes;
+    
+    return {
+        baseFare: basePrice,
+        gst: gstAmount,
+        fuelSurcharge: fuelSurcharge,
+        airportFee: airportFee,
+        serviceFee: serviceFee,
+        totalTaxes: totalTaxes,
+        totalFare: totalFare
+    };
 }
 
 // Event Listeners Setup
@@ -312,7 +365,7 @@ function setupFormValidation() {
             if (!value) {
                 showFieldError('phone', 'Mobile number is required');
             } else if (!validateMobile(value)) {
-                showFieldError('phone', 'Mobile number must be exactly 10 digits');
+                showFieldError('phone', 'Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9)');
             } else {
                 clearFieldError('phone');
             }
@@ -378,7 +431,7 @@ function clearFieldError(fieldId) {
     }
 }
 
-// Destination Filtering
+// Enhanced Destination Filtering
 function setupDestinationFiltering() {
     const fromSelect = document.getElementById('from');
     const toSelect = document.getElementById('to');
@@ -386,20 +439,29 @@ function setupDestinationFiltering() {
     if (fromSelect && toSelect) {
         fromSelect.addEventListener('change', function() {
             const selectedFrom = this.value;
-            const toOptions = toSelect.querySelectorAll('option');
             
-            toOptions.forEach(option => {
-                if (option.value === selectedFrom) {
-                    option.style.display = 'none';
-                } else {
-                    option.style.display = 'block';
-                }
-            });
+            // Clear and rebuild destination options
+            toSelect.innerHTML = '<option value="">Select Destination City</option>';
             
-            // Reset destination if it's the same as departure
-            if (toSelect.value === selectedFrom) {
-                toSelect.value = '';
+            if (selectedFrom) {
+                // Find available destinations for selected origin
+                const availableDestinations = flights
+                    .filter(flight => flight.origin === selectedFrom)
+                    .map(flight => flight.destination);
+                
+                availableDestinations.forEach(destination => {
+                    toSelect.innerHTML += `<option value="${destination}">${destination}</option>`;
+                });
+            } else {
+                // Show all destinations if no origin selected
+                const allDestinations = [...new Set(flights.map(flight => flight.destination))];
+                allDestinations.forEach(destination => {
+                    toSelect.innerHTML += `<option value="${destination}">${destination}</option>`;
+                });
             }
+            
+            // Reset destination selection
+            toSelect.value = '';
         });
     }
 }
@@ -486,7 +548,7 @@ function toggleMobileNav() {
     navToggle.classList.toggle('active');
 }
 
-// Fare Calculator
+// Enhanced Fare Calculator
 function setupFareCalculator() {
     const seatClassSelect = document.getElementById('seatClass');
     const baseFareElement = document.getElementById('baseFare');
@@ -497,13 +559,11 @@ function setupFareCalculator() {
         seatClassSelect.addEventListener('change', function() {
             const selectedClass = this.value;
             if (selectedClass && config.prices[selectedClass]) {
-                const baseFare = config.prices[selectedClass];
-                const taxes = config.taxes;
-                const total = baseFare + taxes;
+                const fareBreakdown = calculateTotalFare(config.prices[selectedClass]);
                 
-                baseFareElement.textContent = `₹${baseFare.toLocaleString()}`;
-                taxesElement.textContent = `₹${taxes.toLocaleString()}`;
-                totalFareElement.textContent = `₹${total.toLocaleString()}`;
+                baseFareElement.textContent = `₹${fareBreakdown.baseFare.toLocaleString()}`;
+                taxesElement.textContent = `₹${Math.round(fareBreakdown.totalTaxes).toLocaleString()}`;
+                totalFareElement.textContent = `₹${Math.round(fareBreakdown.totalFare).toLocaleString()}`;
             } else {
                 baseFareElement.textContent = '₹0';
                 taxesElement.textContent = '₹0';
@@ -574,11 +634,13 @@ function showSeatSelection(flight, bookingData) {
         const actualSeatIndex = selectedClass === 'business' ? index : index + 5;
         seatsHTML += `
             <button class="seat-btn ${isAvailable ? 'available' : 'occupied'}" 
-                    ${isAvailable ? `onclick="selectSeatForBooking(${actualSeatIndex}, '${flight.flightNumber}', ${JSON.stringify(bookingData).replace(/"/g, '&quot;')})"` : 'disabled'}>
+                    ${isAvailable ? `onclick="selectSeatForBooking(${actualSeatIndex}, '${flight.flightNumber}', '${JSON.stringify(bookingData).replace(/"/g, '&quot;')}')"` : 'disabled'}>
                 ${seat.seatNumber}
             </button>
         `;
     });
+    
+    const fareBreakdown = calculateTotalFare(classPrice);
     
     modalBody.innerHTML = `
         <div class="flight-seat-selection">
@@ -587,7 +649,12 @@ function showSeatSelection(flight, bookingData) {
             </div>
             
             <div class="seat-class-section">
-                <h5>${classTitle} - ₹${classPrice.toLocaleString()}</h5>
+                <h5>${classTitle}</h5>
+                <div class="fare-preview">
+                    <p>Base Fare: ₹${fareBreakdown.baseFare.toLocaleString()}</p>
+                    <p>Taxes & Fees: ₹${Math.round(fareBreakdown.totalTaxes).toLocaleString()}</p>
+                    <p><strong>Total: ₹${Math.round(fareBreakdown.totalFare).toLocaleString()}</strong></p>
+                </div>
                 <div class="seats-row">
                     ${seatsHTML}
                 </div>
@@ -609,11 +676,13 @@ function showSeatSelection(flight, bookingData) {
     showModal();
 }
 
-function selectSeatForBooking(seatIndex, flightNumber, bookingData) {
+function selectSeatForBooking(seatIndex, flightNumber, bookingDataStr) {
+    const bookingData = JSON.parse(bookingDataStr.replace(/&quot;/g, '"'));
     const flight = flights.find(f => f.flightNumber === flightNumber);
     const seat = flight.seats[seatIndex];
     
     // Store seat and flight info for payment
+    currentBookingData = bookingData;
     currentBookingData.flight = flight;
     currentBookingData.seat = seat;
     currentBookingData.seatIndex = seatIndex;
@@ -631,6 +700,7 @@ function selectSeatForBooking(seatIndex, flightNumber, bookingData) {
 function showPaymentSummary() {
     const paymentSummary = document.getElementById('paymentSummary');
     const { flight, seat } = currentBookingData;
+    const fareBreakdown = calculateTotalFare(seat.price);
     
     paymentSummary.innerHTML = `
         <div class="booking-summary-details">
@@ -658,9 +728,29 @@ function showPaymentSummary() {
                 <span>Seat:</span>
                 <span>${seat.seatNumber}</span>
             </div>
+            <div class="summary-row">
+                <span>Base Fare:</span>
+                <span>₹${fareBreakdown.baseFare.toLocaleString()}</span>
+            </div>
+            <div class="summary-row">
+                <span>GST (18%):</span>
+                <span>₹${Math.round(fareBreakdown.gst).toLocaleString()}</span>
+            </div>
+            <div class="summary-row">
+                <span>Fuel Surcharge:</span>
+                <span>₹${Math.round(fareBreakdown.fuelSurcharge).toLocaleString()}</span>
+            </div>
+            <div class="summary-row">
+                <span>Airport Fee:</span>
+                <span>₹${fareBreakdown.airportFee.toLocaleString()}</span>
+            </div>
+            <div class="summary-row">
+                <span>Service Fee:</span>
+                <span>₹${fareBreakdown.serviceFee.toLocaleString()}</span>
+            </div>
             <div class="summary-row total">
                 <span>Total Amount:</span>
-                <span>₹${seat.price.toLocaleString()}</span>
+                <span>₹${Math.round(fareBreakdown.totalFare).toLocaleString()}</span>
             </div>
         </div>
     `;
@@ -675,12 +765,14 @@ function handlePaymentSubmit(e) {
     setTimeout(() => {
         // Complete the booking
         const { flight, seat, seatIndex } = currentBookingData;
+        const fareBreakdown = calculateTotalFare(seat.price);
         
         // Book the seat
         seat.passport = currentBookingData.passportNumber;
         seat.name = currentBookingData.passengerName;
         seat.email = currentBookingData.email;
         seat.status = BOOKED;
+        seat.price = Math.round(fareBreakdown.totalFare); // Store total fare including taxes
         
         // Update most recent fare
         mostRecentSeatFare = seat.price;
@@ -718,7 +810,7 @@ function validateBookingData(data) {
     if (!data.email.trim()) errors.push('Email is required');
     if (!validateEmail(data.email)) errors.push('Invalid email address');
     if (!data.phone.trim()) errors.push('Mobile number is required');
-    if (!validateMobile(data.phone)) errors.push('Mobile number must be exactly 10 digits');
+    if (!validateMobile(data.phone)) errors.push('Please enter a valid 10-digit Indian mobile number');
     if (!data.from) errors.push('Departure city is required');
     if (!data.to) errors.push('Destination city is required');
     if (data.from === data.to) errors.push('Departure and destination cannot be the same');
@@ -1272,6 +1364,24 @@ const customStyles = `
         margin-bottom: 1rem;
     }
     
+    .fare-preview {
+        background: var(--glass-bg);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--glass-border);
+    }
+    
+    .fare-preview p {
+        margin: 0.25rem 0;
+        color: var(--text-secondary);
+    }
+    
+    .fare-preview p:last-child {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+    }
+    
     .seats-row {
         display: flex;
         justify-content: center;
@@ -1480,6 +1590,10 @@ const customStyles = `
             width: 35px;
             height: 35px;
             font-size: 0.8rem;
+        }
+        
+        .fare-preview {
+            padding: 0.75rem;
         }
     }
 `;
