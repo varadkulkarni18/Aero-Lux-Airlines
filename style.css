@@ -1954,3 +1954,36 @@ textarea:focus {
         page-break-inside: avoid;
     }
 }
+
+/* Fix net banking dropdown visibility in dark mode */
+#bankSelect {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 12px;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+/* Options inside net banking dropdown */
+#bankSelect option {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] #bankSelect option {
+    background: #ffffff;
+    color: #1a202c;
+}
+
+
