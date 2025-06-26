@@ -7,14 +7,14 @@ let flights = [
         seats: []
     },
     {
-        flightNumber: "FL002", 
+        flightNumber: "FL002",
         origin: "Mumbai",
         destination: "Bengaluru",
         seats: []
     },
     {
         flightNumber: "FL003",
-        origin: "Chennai", 
+        origin: "Chennai",
         destination: "Hyderabad",
         seats: []
     }
@@ -69,7 +69,7 @@ const navMenu = document.getElementById('navMenu');
 const themeToggle = document.getElementById('themeToggle');
 
 // Initialize application
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Initialize loading screen with shorter duration
     setTimeout(() => {
         loader.classList.add('hidden');
@@ -80,32 +80,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize theme
     initializeTheme();
-    
+
     // Initialize flights and seats matching C logic
     initializeFlights();
-    
+
     // Initialize seat map
     initializeSeatMap();
-    
+
     // Set up event listeners
     setupEventListeners();
-    
+
     // Initialize fare calculator
     setupFareCalculator();
-    
+
     // Display tickets
     displayTickets();
-    
+
     // Set minimum date for booking
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('departureDate').min = today;
-    
+
     // Update form options to match C flights
     updateFormOptions();
-    
+
     // Initialize scroll animations
     initializeScrollAnimations();
-    
+
     // Initialize FAQ functionality
     initializeFAQ();
 });
@@ -120,7 +120,7 @@ function initializeTheme() {
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
+
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     updateThemeIcon(newTheme);
@@ -153,19 +153,19 @@ function initializeFlights() {
 function updateFormOptions() {
     const fromSelect = document.getElementById('from');
     const toSelect = document.getElementById('to');
-    
+
     // Clear existing options except first
     fromSelect.innerHTML = '<option value="">Select Departure City</option>';
     toSelect.innerHTML = '<option value="">Select Destination City</option>';
-    
+
     // Add only valid departure cities (origins)
     const origins = [...new Set(flights.map(flight => flight.origin))];
     const destinations = [...new Set(flights.map(flight => flight.destination))];
-    
+
     origins.forEach(city => {
         fromSelect.innerHTML += `<option value="${city}">${city}</option>`;
     });
-    
+
     destinations.forEach(city => {
         toSelect.innerHTML += `<option value="${city}">${city}</option>`;
     });
@@ -175,7 +175,7 @@ function updateFormOptions() {
 function validateMobile(mobile) {
     // Must be exactly 10 digits
     if (!/^\d{10}$/.test(mobile)) return false;
-    
+
     // Reject obvious fake numbers
     const fakePatterns = [
         /^0{10}$/, // All zeros
@@ -191,14 +191,14 @@ function validateMobile(mobile) {
         /^1234567890$/, // Sequential
         /^0123456789$/, // Sequential starting with 0
     ];
-    
+
     for (let pattern of fakePatterns) {
         if (pattern.test(mobile)) return false;
     }
-    
+
     // Must start with 6, 7, 8, or 9 (Indian mobile numbers)
     if (!/^[6-9]/.test(mobile)) return false;
-    
+
     return true;
 }
 
@@ -229,6 +229,13 @@ function isUniquePassport(passport) {
     return true;
 }
 
+function isEmailUsedInFlight(flight, email) {
+    return flight.seats.some(seat =>
+        seat.email === email && seat.status === BOOKED
+    );
+}
+
+
 // Find flight by origin and destination
 function findFlightByRoute(from, to) {
     return flights.find(flight => flight.origin === from && flight.destination === to);
@@ -240,10 +247,10 @@ function calculateTotalFare(basePrice) {
     const fuelSurcharge = basePrice * config.taxes.fuelSurcharge;
     const airportFee = config.taxes.airportFee;
     const serviceFee = config.taxes.serviceFee;
-    
+
     const totalTaxes = gstAmount + fuelSurcharge + airportFee + serviceFee;
     const totalFare = basePrice + totalTaxes;
-    
+
     return {
         baseFare: basePrice,
         gst: gstAmount,
@@ -263,7 +270,7 @@ function setupEventListeners() {
             e.preventDefault();
             const targetSection = link.getAttribute('data-section');
             navigateToSection(targetSection);
-            
+
             // Close mobile menu
             navMenu.classList.remove('active');
             navToggle.classList.remove('active');
@@ -286,31 +293,31 @@ function setupEventListeners() {
     if (paymentForm) paymentForm.addEventListener('submit', handlePaymentSubmit);
     if (cancelForm) cancelForm.addEventListener('submit', handleCancelSubmit);
     if (contactForm) contactForm.addEventListener('submit', handleContactSubmit);
-    
+
     // Search
     if (ticketSearch) ticketSearch.addEventListener('input', handleTicketSearch);
-    
+
     // Modal close
     document.querySelector('.modal-close').addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
-    
+
     // Notification close
     document.querySelector('.notification-close').addEventListener('click', hideNotification);
-    
+
     // Mobile navigation
     navToggle.addEventListener('click', toggleMobileNav);
-    
+
     // Theme toggle
     themeToggle.addEventListener('click', toggleTheme);
-    
+
     // Form validation
     setupFormValidation();
-    
+
     // Payment method switching
     setupPaymentMethods();
-    
+
     // Destination filtering
     setupDestinationFiltering();
 }
@@ -330,63 +337,64 @@ function setupFormValidation() {
     if (passengerName) {
         passengerName.addEventListener('blur', () => validateField('passengerName', 'Passenger name is required'));
     }
-    
+
     if (passportNumber) {
         passportNumber.addEventListener('blur', () => {
             const value = passportNumber.value.trim();
             if (!value) {
                 showFieldError('passportNumber', 'Passport number is required');
-            } else if (!validatePassport(value)) {
-                showFieldError('passportNumber', 'Invalid passport format. Must be 1 capital letter + 7 digits (e.g., A1234567)');
-            } else if (!isUniquePassport(value)) {
-                showFieldError('passportNumber', 'This passport number is already used');
+            } else if (!/^[A-PR-WYa-pr-wy][0-9]{7}$/.test(value)) {
+                showFieldError('passportNumber', 'Invalid Indian passport format (e.g., A1234567)');
             } else {
                 clearFieldError('passportNumber');
             }
         });
     }
-    
+
+
     if (email) {
         email.addEventListener('blur', () => {
             const value = email.value.trim();
             if (!value) {
-                showFieldError('email', 'Email address is required');
-            } else if (!validateEmail(value)) {
-                showFieldError('email', 'Please enter a valid email address');
+                showFieldError('email', 'Email is required');
+            } else if (!/^\S+@\S+\.\S+$/.test(value)) {
+                showFieldError('email', 'Invalid email format');
             } else {
                 clearFieldError('email');
             }
         });
     }
-    
+
+
     if (phone) {
         phone.addEventListener('blur', () => {
             const value = phone.value.trim();
             if (!value) {
                 showFieldError('phone', 'Mobile number is required');
-            } else if (!validateMobile(value)) {
-                showFieldError('phone', 'Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9)');
+            } else if (!/^[6-9]\d{9}$/.test(value)) {
+                showFieldError('phone', 'Invalid Indian mobile number');
             } else {
                 clearFieldError('phone');
             }
         });
     }
-    
+
+
     if (from) {
         from.addEventListener('change', () => validateField('from', 'Please select departure city'));
     }
-    
+
     if (to) {
         to.addEventListener('change', () => validateField('to', 'Please select destination city'));
     }
-    
+
     if (departureDate) {
         departureDate.addEventListener('change', () => {
             const value = departureDate.value;
             const selectedDate = new Date(value);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            
+
             if (!value) {
                 showFieldError('departureDate', 'Departure date is required');
             } else if (selectedDate < today) {
@@ -396,7 +404,7 @@ function setupFormValidation() {
             }
         });
     }
-    
+
     if (seatClass) {
         seatClass.addEventListener('change', () => validateField('seatClass', 'Please select seat class'));
     }
@@ -405,7 +413,7 @@ function setupFormValidation() {
 function validateField(fieldId, errorMessage) {
     const field = document.getElementById(fieldId);
     const value = field.value.trim();
-    
+
     if (!value) {
         showFieldError(fieldId, errorMessage);
         return false;
@@ -435,20 +443,20 @@ function clearFieldError(fieldId) {
 function setupDestinationFiltering() {
     const fromSelect = document.getElementById('from');
     const toSelect = document.getElementById('to');
-    
+
     if (fromSelect && toSelect) {
-        fromSelect.addEventListener('change', function() {
+        fromSelect.addEventListener('change', function () {
             const selectedFrom = this.value;
-            
+
             // Clear and rebuild destination options
             toSelect.innerHTML = '<option value="">Select Destination City</option>';
-            
+
             if (selectedFrom) {
                 // Find available destinations for selected origin
                 const availableDestinations = flights
                     .filter(flight => flight.origin === selectedFrom)
                     .map(flight => flight.destination);
-                
+
                 availableDestinations.forEach(destination => {
                     toSelect.innerHTML += `<option value="${destination}">${destination}</option>`;
                 });
@@ -459,7 +467,7 @@ function setupDestinationFiltering() {
                     toSelect.innerHTML += `<option value="${destination}">${destination}</option>`;
                 });
             }
-            
+
             // Reset destination selection
             toSelect.value = '';
         });
@@ -472,17 +480,17 @@ function setupPaymentMethods() {
     const cardDetails = document.getElementById('cardDetails');
     const upiDetails = document.getElementById('upiDetails');
     const netbankingDetails = document.getElementById('netbankingDetails');
-    
+
     if (paymentMethods.length > 0) {
         paymentMethods.forEach(method => {
-            method.addEventListener('change', function() {
+            method.addEventListener('change', function () {
                 // Hide all payment details
                 if (cardDetails) cardDetails.style.display = 'none';
                 if (upiDetails) upiDetails.style.display = 'none';
                 if (netbankingDetails) netbankingDetails.style.display = 'none';
-                
+
                 // Show selected payment method details
-                switch(this.value) {
+                switch (this.value) {
                     case 'card':
                         if (cardDetails) cardDetails.style.display = 'block';
                         break;
@@ -496,21 +504,21 @@ function setupPaymentMethods() {
             });
         });
     }
-    
+
     // Format card number input
     const cardNumber = document.getElementById('cardNumber');
     if (cardNumber) {
-        cardNumber.addEventListener('input', function() {
+        cardNumber.addEventListener('input', function () {
             let value = this.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
             let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
             this.value = formattedValue;
         });
     }
-    
+
     // Format expiry date input
     const expiryDate = document.getElementById('expiryDate');
     if (expiryDate) {
-        expiryDate.addEventListener('input', function() {
+        expiryDate.addEventListener('input', function () {
             let value = this.value.replace(/\D/g, '');
             if (value.length >= 2) {
                 value = value.substring(0, 2) + '/' + value.substring(2, 4);
@@ -526,19 +534,19 @@ function navigateToSection(sectionId) {
     navLinks.forEach(link => {
         link.classList.toggle('active', link.getAttribute('data-section') === sectionId);
     });
-    
+
     // Update sections
     sections.forEach(section => {
         section.classList.toggle('active', section.id === sectionId);
     });
-    
+
     // Special handling for different sections
     if (sectionId === 'tickets') {
         displayTickets();
     } else if (sectionId === 'availability') {
         renderSeatMap();
     }
-    
+
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -554,13 +562,13 @@ function setupFareCalculator() {
     const baseFareElement = document.getElementById('baseFare');
     const taxesElement = document.getElementById('taxes');
     const totalFareElement = document.getElementById('totalFare');
-    
+
     if (seatClassSelect) {
-        seatClassSelect.addEventListener('change', function() {
+        seatClassSelect.addEventListener('change', function () {
             const selectedClass = this.value;
             if (selectedClass && config.prices[selectedClass]) {
                 const fareBreakdown = calculateTotalFare(config.prices[selectedClass]);
-                
+
                 baseFareElement.textContent = `₹${fareBreakdown.baseFare.toLocaleString()}`;
                 taxesElement.textContent = `₹${Math.round(fareBreakdown.totalTaxes).toLocaleString()}`;
                 totalFareElement.textContent = `₹${Math.round(fareBreakdown.totalFare).toLocaleString()}`;
@@ -576,47 +584,171 @@ function setupFareCalculator() {
 // Booking System
 function handleBookingSubmit(e) {
     e.preventDefault();
-    
+
     const formData = new FormData(bookingForm);
     const bookingData = Object.fromEntries(formData.entries());
-    
-    // Validation
-    if (!validateBookingData(bookingData)) {
+
+    const { passengerName, passportNumber, email, phone, departureDate, from, to } = bookingData;
+
+    let hasError = false;
+    let invalidFields = [];
+
+    // 🔶 Name validation
+    if (!passengerName.trim()) {
+        showFieldError('passengerName', 'Passenger name is required');
+        hasError = true;
+        invalidFields.push('Passenger Name');
+    } else if (!/^[A-Za-z ]+$/.test(passengerName)) {
+        showFieldError('passengerName', 'Only alphabets and spaces allowed');
+        hasError = true;
+        invalidFields.push('Passenger Name');
+    } else {
+        clearFieldError('passengerName');
+    }
+
+    // 🔶 Passport number (Indian format: 1 letter + 7 digits)
+    if (!passportNumber.trim()) {
+        showFieldError('passportNumber', 'Passport number is required');
+        hasError = true;
+        invalidFields.push('Passport Number');
+    } else if (!/^[A-PR-WYa-pr-wy][0-9]{7}$/.test(passportNumber)) {
+        showFieldError('passportNumber', 'Invalid Indian passport format (e.g., A1234567)');
+        hasError = true;
+        invalidFields.push('Passport Number');
+    } else {
+        clearFieldError('passportNumber');
+    }
+
+    // 🔶 Mobile number (Indian: starts with 6-9, total 10 digits)
+    if (!phone.trim()) {
+        showFieldError('phone', 'Mobile number is required');
+        hasError = true;
+        invalidFields.push('Mobile Number');
+    } else if (!/^[6-9]\d{9}$/.test(phone)) {
+        showFieldError('phone', 'Invalid Indian mobile number');
+        hasError = true;
+        invalidFields.push('Mobile Number');
+    } else {
+        clearFieldError('phone');
+    }
+
+    // ❌ STOP BOOKING IF FORMAT IS WRONG
+    if (hasError) {
+        showNotification('error', '❌', `Please correct: ${invalidFields.join(', ')}`);
         return;
     }
-    
-    // Find the flight
-    const flight = findFlightByRoute(bookingData.from, bookingData.to);
+
+
+    const flight = findFlightByRoute(from, to);
     if (!flight) {
         showNotification('error', '❌', 'No flight available for this route!');
         return;
     }
-    
-    // Check passport uniqueness
-    if (!isUniquePassport(bookingData.passportNumber)) {
-        showNotification('error', '❌', 'Passport number already used!');
-        return;
+
+
+
+    // ✅ Name validation
+    if (!passengerName.trim()) {
+        showFieldError('passengerName', 'Passenger name is required');
+        hasError = true;
+    } else if (!/^[A-Za-z ]+$/.test(passengerName)) {
+        showFieldError('passengerName', 'Only alphabets and spaces allowed');
+        hasError = true;
+    } else {
+        clearFieldError('passengerName');
     }
-    
-    // Store booking data for later use
+
+    // ✅ Now do passport, email, phone duplicate checks (only with flight + date)
+    let matchingRecord = null;
+
+    // 1. Check if same user already booked this same flight + same date
+    for (const seat of flight.seats) {
+        if (
+            seat.status === BOOKED &&
+            seat.date === departureDate &&
+            seat.passport === passportNumber &&
+            seat.email === email &&
+            seat.phone === phone
+        ) {
+            showNotification('error', '❌', 'These details are already used for this flight on this date.');
+            return;
+        }
+    }
+
+    // 2. Check for mismatched identity (reuse of email/passport/phone by someone else)
+    for (const seat of flight.seats) {
+        if (
+            seat.status === BOOKED &&
+            seat.date === departureDate &&
+            (
+                (seat.email === email && (seat.passport !== passportNumber || seat.phone !== phone)) ||
+                (seat.passport === passportNumber && (seat.email !== email || seat.phone !== phone)) ||
+                (seat.phone === phone && (seat.email !== email || seat.passport !== passportNumber))
+            )
+        ) {
+            if (seat.email === email) {
+                showNotification('error', '❌', 'This email address is already linked to another user for this flight and date.');
+            } else if (seat.passport === passportNumber) {
+                showNotification('error', '❌', 'This passport number is already linked to another user for this flight and date.');
+            } else if (seat.phone === phone) {
+                showNotification('error', '❌', 'This mobile number is already linked to another user for this flight and date.');
+            } else {
+                showNotification('error', '❌', 'These details are already linked to another booking.');
+            }
+            return;
+        }
+
+        // 3. Prevent partial identity reuse on other flights or dates
+for (const f of flights) {
+    for (const s of f.seats) {
+        if (s.status !== BOOKED) continue;
+
+        const allMatch = (
+            s.passport === passportNumber &&
+            s.email === email &&
+            s.phone === phone
+        );
+
+        const anyOneMatchesButNotAll = (
+            (s.email === email || s.passport === passportNumber || s.phone === phone) && !allMatch
+        );
+
+        if (anyOneMatchesButNotAll) {
+            if (s.email === email && (s.passport !== passportNumber || s.phone !== phone)) {
+                showNotification('error', '❌', 'This email address is already linked to another user.');
+            } else if (s.passport === passportNumber && (s.email !== email || s.phone !== phone)) {
+                showNotification('error', '❌', 'This passport number is already linked to another user.');
+            } else if (s.phone === phone && (s.email !== email || s.passport !== passportNumber)) {
+                showNotification('error', '❌', 'This mobile number is already linked to another user.');
+            } else {
+                showNotification('error', '❌', 'These credentials don’t match — booking blocked.');
+            }
+            return;
+        }
+    }
+}
+
+    }
+
+
+    // ✅ All clear — proceed to seat selection
     currentBookingData = bookingData;
-    
-    // Show seat selection for the specific flight and class
     showSeatSelection(flight, bookingData);
 }
+
 
 function showSeatSelection(flight, bookingData) {
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
-    
+
     modalTitle.textContent = `Select Seat - ${flight.flightNumber}`;
-    
+
     // Filter seats based on selected class
     const selectedClass = bookingData.seatClass;
     let seatsToShow = [];
     let classTitle = '';
     let classPrice = 0;
-    
+
     if (selectedClass === 'business') {
         seatsToShow = flight.seats.slice(0, 5); // Business seats 1-5
         classTitle = 'Business Class (Seats 1-5)';
@@ -626,11 +758,13 @@ function showSeatSelection(flight, bookingData) {
         classTitle = 'Economy Class (Seats 6-10)';
         classPrice = ECONOMY_BASE_PRICE;
     }
-    
+
     // Generate seat selection UI for selected class only
     let seatsHTML = '';
     seatsToShow.forEach((seat, index) => {
-        const isAvailable = seat.status === CANCELLED;
+       const isBookedOnSameDate = seat.status === BOOKED && seat.date === bookingData.departureDate;
+const isAvailable = !isBookedOnSameDate;
+
         const actualSeatIndex = selectedClass === 'business' ? index : index + 5;
         seatsHTML += `
             <button class="seat-btn ${isAvailable ? 'available' : 'occupied'}" 
@@ -639,9 +773,9 @@ function showSeatSelection(flight, bookingData) {
             </button>
         `;
     });
-    
+
     const fareBreakdown = calculateTotalFare(classPrice);
-    
+
     modalBody.innerHTML = `
         <div class="flight-seat-selection">
             <div class="flight-info">
@@ -672,7 +806,7 @@ function showSeatSelection(flight, bookingData) {
             </div>
         </div>
     `;
-    
+
     showModal();
 }
 
@@ -680,19 +814,19 @@ function selectSeatForBooking(seatIndex, flightNumber, bookingDataStr) {
     const bookingData = JSON.parse(bookingDataStr.replace(/&quot;/g, '"'));
     const flight = flights.find(f => f.flightNumber === flightNumber);
     const seat = flight.seats[seatIndex];
-    
+
     // Store seat and flight info for payment
     currentBookingData = bookingData;
     currentBookingData.flight = flight;
     currentBookingData.seat = seat;
     currentBookingData.seatIndex = seatIndex;
-    
+
     // Close modal
     closeModal();
-    
+
     // Navigate to payment section
     navigateToSection('payment');
-    
+
     // Show payment summary
     showPaymentSummary();
 }
@@ -701,7 +835,7 @@ function showPaymentSummary() {
     const paymentSummary = document.getElementById('paymentSummary');
     const { flight, seat } = currentBookingData;
     const fareBreakdown = calculateTotalFare(seat.price);
-    
+
     paymentSummary.innerHTML = `
         <div class="booking-summary-details">
             <div class="summary-row">
@@ -756,52 +890,62 @@ function showPaymentSummary() {
     `;
 }
 
+
 function handlePaymentSubmit(e) {
     e.preventDefault();
-    
+
     // Simulate payment processing
     showNotification('info', '⏳', 'Processing payment...');
-    
+
     setTimeout(() => {
         // Complete the booking
         const { flight, seat, seatIndex } = currentBookingData;
         const fareBreakdown = calculateTotalFare(seat.price);
-        
+
         // Book the seat
         seat.passport = currentBookingData.passportNumber;
         seat.name = currentBookingData.passengerName;
         seat.email = currentBookingData.email;
-        seat.status = BOOKED;
         seat.price = Math.round(fareBreakdown.totalFare); // Store total fare including taxes
-        
+        seat.date = currentBookingData.departureDate;
+        seat.phone = currentBookingData.phone;
+        seat.status = BOOKED;
+
+        // ✅ Generate 6-character alphanumeric Booking ID (PNR style)
+        const bookingId = generateBookingId();
+        seat.bookingId = bookingId;
+        seat.date = currentBookingData.departureDate;
+
+
+
         // Update most recent fare
         mostRecentSeatFare = seat.price;
-        
+
         // Show success
         showBookingConfirmation(flight, seat, currentBookingData);
-        
+
         // Reset forms
         bookingForm.reset();
         paymentForm.reset();
         document.getElementById('baseFare').textContent = '₹0';
         document.getElementById('taxes').textContent = '₹0';
         document.getElementById('totalFare').textContent = '₹0';
-        
+
         // Clear current booking data
         currentBookingData = null;
-        
+
         // Navigate back to home
         setTimeout(() => {
             closeModal();
             navigateToSection('home');
-        }, 3000);
-        
+        }, 6000);
+
     }, 2000);
 }
 
 function validateBookingData(data) {
     const errors = [];
-    
+
     if (!data.passengerName.trim()) errors.push('Passenger name is required');
     if (!data.passportNumber.trim()) errors.push('Passport number is required');
     if (!validatePassport(data.passportNumber)) {
@@ -816,28 +960,28 @@ function validateBookingData(data) {
     if (data.from === data.to) errors.push('Departure and destination cannot be the same');
     if (!data.departureDate) errors.push('Departure date is required');
     if (!data.seatClass) errors.push('Seat class is required');
-    
+
     // Date validation
     const selectedDate = new Date(data.departureDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     if (selectedDate < today) {
         errors.push('Departure date cannot be in the past');
     }
-    
+
     if (errors.length > 0) {
         showNotification('error', '❌', errors.join('<br>'));
         return false;
     }
-    
+
     return true;
 }
 
 function showBookingConfirmation(flight, seat, bookingData) {
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
-    
+
     modalTitle.textContent = 'Booking Confirmed! ✈️';
     modalBody.innerHTML = `
         <div class="booking-confirmation">
@@ -883,7 +1027,7 @@ function showBookingConfirmation(flight, seat, bookingData) {
             </div>
         </div>
     `;
-    
+
     showModal();
     showNotification('success', '✅', 'Flight booked successfully!');
 }
@@ -891,7 +1035,7 @@ function showBookingConfirmation(flight, seat, bookingData) {
 // Ticket Management
 function displayTickets() {
     const allBookings = [];
-    
+
     // Collect all bookings from all flights
     flights.forEach(flight => {
         flight.seats.forEach(seat => {
@@ -903,7 +1047,7 @@ function displayTickets() {
             }
         });
     });
-    
+
     if (allBookings.length === 0) {
         ticketsList.innerHTML = `
             <div class="no-tickets glass-card">
@@ -915,16 +1059,16 @@ function displayTickets() {
                 </div>
             </div>
         `;
-        
+
         // Add event listener for the button
         const bookBtn = ticketsList.querySelector('[data-section="booking"]');
         if (bookBtn) {
             bookBtn.addEventListener('click', () => navigateToSection('booking'));
         }
-        
+
         return;
     }
-    
+
     ticketsList.innerHTML = allBookings.map(booking => `
         <div class="ticket-card glass-card">
             <div class="ticket-info">
@@ -932,6 +1076,15 @@ function displayTickets() {
                     <label>Flight</label>
                     <span>${booking.flight.flightNumber}</span>
                 </div>
+                <div class="ticket-field">
+                    <label>Date</label>
+                    <span>${formatDate(booking.seat.date)}</span>
+                </div>
+                <div class="ticket-field">
+                    <label>Booking ID</label>
+                    <span>${booking.seat.bookingId || 'Not Available'}</span>
+                </div>
+
                 <div class="ticket-field">
                     <label>Passenger</label>
                     <span>${booking.seat.name}</span>
@@ -967,7 +1120,7 @@ function displayTickets() {
 function handleTicketSearch() {
     const searchTerm = ticketSearch.value.toLowerCase();
     const allBookings = [];
-    
+
     // Collect all bookings
     flights.forEach(flight => {
         flight.seats.forEach(seat => {
@@ -979,13 +1132,13 @@ function handleTicketSearch() {
             }
         });
     });
-    
-    const filteredBookings = allBookings.filter(booking => 
+
+    const filteredBookings = allBookings.filter(booking =>
         booking.seat.passport.toLowerCase().includes(searchTerm) ||
         booking.seat.name.toLowerCase().includes(searchTerm) ||
         booking.flight.flightNumber.toLowerCase().includes(searchTerm)
     );
-    
+
     if (filteredBookings.length === 0 && searchTerm) {
         ticketsList.innerHTML = `
             <div class="no-tickets glass-card">
@@ -998,7 +1151,7 @@ function handleTicketSearch() {
         `;
         return;
     }
-    
+
     // Display filtered results
     if (searchTerm) {
         ticketsList.innerHTML = filteredBookings.map(booking => `
@@ -1046,35 +1199,35 @@ function handleTicketSearch() {
 // Cancellation System
 function handleCancelSubmit(e) {
     e.preventDefault();
-    
+
     const formData = new FormData(cancelForm);
     const passportNumber = formData.get('cancelPassport');
     const email = formData.get('cancelEmail');
-    
+
     // Validate inputs
     if (!passportNumber.trim()) {
         showFieldError('cancelPassport', 'Passport number is required');
         return;
     }
-    
+
     if (!email.trim()) {
         showFieldError('cancelEmail', 'Email address is required');
         return;
     }
-    
+
     if (!validateEmail(email)) {
         showFieldError('cancelEmail', 'Please enter a valid email address');
         return;
     }
-    
+
     // Find booking by passport and email
     let foundBooking = null;
     let foundFlight = null;
-    
+
     for (let flight of flights) {
         for (let seat of flight.seats) {
-            if (seat.passport === passportNumber && 
-                seat.email === email && 
+            if (seat.passport === passportNumber &&
+                seat.email === email &&
                 seat.status === BOOKED) {
                 foundBooking = seat;
                 foundFlight = flight;
@@ -1083,12 +1236,12 @@ function handleCancelSubmit(e) {
         }
         if (foundBooking) break;
     }
-    
+
     if (!foundBooking) {
         showNotification('error', '❌', 'No booking found with the provided details!');
         return;
     }
-    
+
     // Show cancellation confirmation
     showCancellationConfirmation(foundFlight, foundBooking);
 }
@@ -1096,7 +1249,7 @@ function handleCancelSubmit(e) {
 function showCancellationConfirmation(flight, seat) {
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
-    
+
     modalTitle.textContent = 'Confirm Cancellation';
     modalBody.innerHTML = `
         <div class="cancellation-confirmation">
@@ -1135,28 +1288,28 @@ function showCancellationConfirmation(flight, seat) {
             </div>
         </div>
     `;
-    
+
     showModal();
 }
 
 function confirmCancellation(flightNumber, seatNumber) {
     const flight = flights.find(f => f.flightNumber === flightNumber);
     const seat = flight.seats[seatNumber - 1];
-    
+
     // Cancel the seat
     seat.status = CANCELLED;
-    
+
     // Close modal
     closeModal();
-    
+
     // Reset form
     cancelForm.reset();
     clearFieldError('cancelPassport');
     clearFieldError('cancelEmail');
-    
+
     // Show success message
     showNotification('success', '✅', `Seat ${seatNumber} cancelled successfully on flight ${flightNumber}.`);
-    
+
     // Refresh tickets display if on tickets page
     if (document.getElementById('tickets').classList.contains('active')) {
         displayTickets();
@@ -1166,10 +1319,10 @@ function confirmCancellation(flightNumber, seatNumber) {
 // Contact Form Handler
 function handleContactSubmit(e) {
     e.preventDefault();
-    
+
     const formData = new FormData(contactForm);
     const contactData = Object.fromEntries(formData.entries());
-    
+
     // Validate contact form
     const errors = [];
     if (!contactData.contactName.trim()) errors.push('Name is required');
@@ -1177,15 +1330,15 @@ function handleContactSubmit(e) {
     if (!validateEmail(contactData.contactEmail)) errors.push('Invalid email address');
     if (!contactData.contactSubject.trim()) errors.push('Subject is required');
     if (!contactData.contactMessage.trim()) errors.push('Message is required');
-    
+
     if (errors.length > 0) {
         showNotification('error', '❌', errors.join('<br>'));
         return;
     }
-    
+
     // Simulate sending message
     showNotification('info', '⏳', 'Sending message...');
-    
+
     setTimeout(() => {
         showNotification('success', '✅', 'Message sent successfully! We\'ll get back to you soon.');
         contactForm.reset();
@@ -1199,9 +1352,9 @@ function initializeSeatMap() {
 
 function renderSeatMap() {
     const container = document.getElementById('seatMapContainer');
-    
+
     let seatMapHTML = '';
-    
+
     flights.forEach((flight, flightIndex) => {
         seatMapHTML += `
             <div class="flight-section">
@@ -1233,7 +1386,7 @@ function renderSeatMap() {
             </div>
         `;
     });
-    
+
     container.innerHTML = seatMapHTML;
 }
 
@@ -1243,7 +1396,7 @@ function initializeScrollAnimations() {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
     };
-    
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -1255,7 +1408,7 @@ function initializeScrollAnimations() {
             }
         });
     }, observerOptions);
-    
+
     // Observe elements with animation classes
     document.querySelectorAll('.animate__animated').forEach(el => {
         el.classList.remove('animate__animated');
@@ -1266,17 +1419,17 @@ function initializeScrollAnimations() {
 // FAQ Functionality
 function initializeFAQ() {
     const faqItems = document.querySelectorAll('.faq-item');
-    
+
     faqItems.forEach(item => {
         const question = item.querySelector('.faq-question');
         question.addEventListener('click', () => {
             const isActive = item.classList.contains('active');
-            
+
             // Close all FAQ items
             faqItems.forEach(faqItem => {
                 faqItem.classList.remove('active');
             });
-            
+
             // Open clicked item if it wasn't active
             if (!isActive) {
                 item.classList.add('active');
@@ -1289,13 +1442,13 @@ function initializeFAQ() {
 function showNotification(type, icon, message) {
     const notificationIcon = notification.querySelector('.notification-icon');
     const notificationMessage = notification.querySelector('.notification-message');
-    
+
     notification.className = `notification ${type}`;
     notificationIcon.textContent = icon;
     notificationMessage.innerHTML = message;
-    
+
     notification.classList.add('show');
-    
+
     // Auto hide after 5 seconds
     setTimeout(() => {
         hideNotification();
@@ -1602,3 +1755,12 @@ const customStyles = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = customStyles;
 document.head.appendChild(styleSheet);
+
+function generateBookingId() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let id = '';
+    for (let i = 0; i < 6; i++) {
+        id += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return id;
+}
