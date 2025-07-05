@@ -417,9 +417,14 @@
                     <h2 class="section-title">Cancel Booking</h2>
                     <p class="section-subtitle">Cancel your flight booking securely</p>
                 </div>
-
                 <div class="cancel-container">
                     <form id="cancelForm" class="cancel-form glass-card">
+                        <div class="form-group">
+                            <label for="cancelBookingId">Booking ID *</label>
+                            <input type="text" id="cancelBookingId" name="cancelBookingId" required placeholder="Enter your booking ID">
+                            <div class="error-message" id="cancelBookingIdError"></div>
+                        </div>
+
                         <div class="form-group">
                             <label for="cancelPassport">Passport Number *</label>
                             <input type="text" id="cancelPassport" name="cancelPassport" required 
