@@ -427,17 +427,16 @@ function showFieldError(fieldId, message) {
     const errorElement = document.getElementById(fieldId + 'Error');
     if (errorElement) {
         errorElement.textContent = message;
-        errorElement.style.display = 'block';
     }
 }
 
 function clearFieldError(fieldId) {
     const errorElement = document.getElementById(fieldId + 'Error');
     if (errorElement) {
-        errorElement.textContent = '';
-        errorElement.style.display = 'none';
+        errorElement.textContent = ' '; // Keeps the height stable
     }
 }
+
 
 // Enhanced Destination Filtering
 function setupDestinationFiltering() {
@@ -938,7 +937,7 @@ function handlePaymentSubmit(e) {
         setTimeout(() => {
             closeModal();
             navigateToSection('home');
-        }, 6000);
+        }, 4000);
 
     }, 2000);
 }
@@ -1201,34 +1200,49 @@ function handleCancelSubmit(e) {
     e.preventDefault();
 
     const formData = new FormData(cancelForm);
-    const passportNumber = formData.get('cancelPassport');
-    const email = formData.get('cancelEmail');
+    const bookingId = formData.get('cancelBookingId')?.trim();
+    const passportNumber = formData.get('cancelPassport')?.trim();
+    const email = formData.get('cancelEmail')?.trim();
 
-    // Validate inputs
-    if (!passportNumber.trim()) {
+    let isValid = true;
+
+    // Reset all errors
+    clearFieldError('cancelBookingId');
+    clearFieldError('cancelPassport');
+    clearFieldError('cancelEmail');
+
+    if (!bookingId) {
+        showFieldError('cancelBookingId', 'Booking ID is required');
+        isValid = false;
+    }
+
+    if (!passportNumber) {
         showFieldError('cancelPassport', 'Passport number is required');
-        return;
+        isValid = false;
     }
 
-    if (!email.trim()) {
+    if (!email) {
         showFieldError('cancelEmail', 'Email address is required');
-        return;
-    }
-
-    if (!validateEmail(email)) {
+        isValid = false;
+    } else if (!validateEmail(email)) {
         showFieldError('cancelEmail', 'Please enter a valid email address');
-        return;
+        isValid = false;
     }
 
-    // Find booking by passport and email
+    if (!isValid) return;
+
+    // ✅ Find booking based on Booking ID + Email + Passport
     let foundBooking = null;
     let foundFlight = null;
 
     for (let flight of flights) {
         for (let seat of flight.seats) {
-            if (seat.passport === passportNumber &&
+            if (
+                seat.bookingId === bookingId &&
+                seat.passport === passportNumber &&
                 seat.email === email &&
-                seat.status === BOOKED) {
+                seat.status === BOOKED
+            ) {
                 foundBooking = seat;
                 foundFlight = flight;
                 break;
@@ -1242,9 +1256,10 @@ function handleCancelSubmit(e) {
         return;
     }
 
-    // Show cancellation confirmation
+    // ✅ Continue with cancellation
     showCancellationConfirmation(foundFlight, foundBooking);
 }
+
 
 function showCancellationConfirmation(flight, seat) {
     const modalTitle = document.getElementById('modalTitle');
