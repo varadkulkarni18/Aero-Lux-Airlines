@@ -775,7 +775,10 @@ input, select, textarea {
     font-size: 0.875rem;
     margin-top: 0.5rem;
     min-height: 1.25rem;
+    display: block;
 }
+
+
 
 /* Enhanced Fare Display with Taxes */
 .fare-display {
